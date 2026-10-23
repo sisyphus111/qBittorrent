@@ -40,9 +40,7 @@ const speedField = (key: string, label: string): Field => ({ key, label: `${labe
 const schema: Record<GroupId, Section[]> = {
     downloads: [
         { title: "文件位置", fields: [
-            { key: "save_path", label: "默认下载目录", type: "text", full: true, hint: "下载完成后的文件保存在此目录。" },
-            { key: "temp_path_enabled", label: "将未完成的文件保存在单独目录", type: "toggle" },
-            { key: "temp_path", label: "未完成文件目录", type: "text", full: true, enabled: values => Boolean(values.temp_path_enabled) }
+            { key: "save_path", label: "默认下载目录", type: "text", full: true }
         ] },
         { title: "添加与保存", fields: [
             { key: "add_stopped_enabled", label: "添加任务后先保持停止", type: "toggle" },
@@ -230,8 +228,6 @@ const validate = (): string => {
     }
     if (Object.hasOwn(changedValues.value, "save_path") && !isStoragePath(String(draft.save_path ?? "").trim()))
         return "默认下载目录应位于 /mnt 下可写的已挂载磁盘上，且不能包含 . 或 .. 路径段。";
-    if (draft.temp_path_enabled && (Object.hasOwn(changedValues.value, "temp_path") || Object.hasOwn(changedValues.value, "temp_path_enabled")) && !isStoragePath(String(draft.temp_path ?? "").trim()))
-        return "未完成文件目录应位于 /mnt 下可写的已挂载磁盘上，且不能包含 . 或 .. 路径段。";
     if (proxyEnabled(draft) && !String(draft.proxy_ip ?? "").trim())
         return "请填写代理服务器地址。";
     const username = String(draft.web_ui_username ?? "");
@@ -349,7 +345,7 @@ onBeforeUnmount(() => {
                             <h4>{{ section.title }}</h4>
                             <div class="settings-grid">
                                 <template v-for="field in section.fields" :key="field.key">
-                                    <div v-if="present(field) && ['save_path', 'temp_path'].includes(field.key)" class="field settings-field settings-full" :class="{ 'settings-disabled': !enabled(field) }">
+                                    <div v-if="present(field) && field.key === 'save_path'" class="field settings-field settings-full" :class="{ 'settings-disabled': !enabled(field) }">
                                         <span>{{ field.label }}</span>
                                         <SavePathPicker :id="`setting-${field.key}`" :model-value="String(draft[field.key] ?? '')" :disabled="!enabled(field) || saving" @update:model-value="draft[field.key] = $event" />
                                     </div>
