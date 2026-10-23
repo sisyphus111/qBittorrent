@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/www">
+        <file alias="public/index.html">@modern_output_dir@/index.html</file>
+        <file alias="private/index.html">@modern_output_dir@/index.html</file>
+        <file alias="public/modern/assets/app.js">@modern_output_dir@/modern/assets/app.js</file>
+        <file alias="public/modern/assets/app.css">@modern_output_dir@/modern/assets/app.css</file>
+    </qresource>
+</RCC>

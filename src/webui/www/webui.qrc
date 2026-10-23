@@ -377,7 +377,6 @@
         <file>private/images/view-refresh.svg</file>
         <file>private/images/view-statistics.svg</file>
         <file>private/images/wallet-open.svg</file>
-        <file>private/index.html</file>
         <file>private/newcategory.html</file>
         <file>private/newfeed.html</file>
         <file>private/newfolder.html</file>
@@ -450,7 +449,6 @@
         <file>public/css/noscript.css</file>
         <file>public/images/qbittorrent-tray.svg</file>
         <file>public/images/qbittorrent32.png</file>
-        <file>public/index.html</file>
         <file>public/robots.txt</file>
         <file>public/scripts/login.js</file>
     </qresource>

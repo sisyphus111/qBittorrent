@@ -34,12 +34,14 @@
 #include <concepts>
 
 #include <QBitArray>
+#include <QDir>
 #include <QFileInfo>
 #include <QFuture>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QList>
 #include <QRegularExpression>
+#include <QStorageInfo>
 #include <QUrl>
 
 #include "base/addtorrentmanager.h"
@@ -1147,6 +1149,27 @@ void TorrentsController::addAction()
     const std::optional<bool> addToQueueTop = parseBool(params()[u"addToTopOfQueue"_s]);
     const std::optional<bool> addStopped = parseBool(params()[u"stopped"_s]);
     const QString savepath = params()[u"savepath"_s].trimmed();
+    // The local storage picker requests a fresh mount check at submission time.
+    // A disk disconnected since the cached capacity scan must not turn into an
+    // ordinary directory on the system filesystem.
+    if (const QString requestedRoot = params()[u"storageRoot"_s].trimmed(); !requestedRoot.isEmpty())
+    {
+        const QString root = QDir::cleanPath(requestedRoot);
+        const QString destination = QDir::cleanPath(savepath);
+        if (!root.startsWith(u"/mnt/"_s)
+            || ((destination != root) && !destination.startsWith(root + u'/')))
+        {
+            throw APIError(APIErrorType::BadParams, tr("The save path is outside the selected storage root."));
+        }
+        const QFileInfo directory {root};
+        const QStorageInfo storage {root};
+        if (!storage.isValid() || !storage.isReady() || storage.isReadOnly()
+            || !directory.isWritable() || directory.canonicalFilePath().isEmpty()
+            || (QDir::cleanPath(storage.rootPath()) != directory.canonicalFilePath()))
+        {
+            throw APIError(APIErrorType::Conflict, tr("The selected storage is not mounted or is not writable. Refresh the storage list and select another disk."));
+        }
+    }
     const QString downloadPath = params()[u"downloadPath"_s].trimmed();
     const std::optional<bool> useDownloadPath = parseBool(params()[u"useDownloadPath"_s]);
     const QString category = params()[u"category"_s];

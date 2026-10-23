@@ -69,6 +69,7 @@
 #include "base/utils/string.h"
 #include "base/version.h"
 #include "apierror.h"
+#include "storageinfo.h"
 #include "../webapplication.h"
 
 using namespace std::chrono_literals;
@@ -1360,6 +1361,11 @@ void AppController::getFreeSpaceAtPathAction()
     const Path path {params().value(u"path"_s)};
     const qint64 freeSpace = Utils::Fs::freeDiskSpaceOnPath(path);
     setResult(QString::number(freeSpace));
+}
+
+void AppController::storageInfoAction()
+{
+    setResult(WebUIStorage::snapshot(Utils::String::parseBool(params()[u"force"_s]).value_or(false)));
 }
 
 void AppController::cookiesAction()

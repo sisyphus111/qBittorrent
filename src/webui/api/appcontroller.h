@@ -52,6 +52,7 @@ private slots:
     void sendTestEmailAction();
     void getDirectoryContentAction();
     void getFreeSpaceAtPathAction();
+    void storageInfoAction();
     void cookiesAction();
     void setCookiesAction();
     void rotateAPIKeyAction();
